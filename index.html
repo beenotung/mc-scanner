@@ -25,6 +25,10 @@
         display: block;
         margin: 1rem;
       }
+      .button-group {
+        display: flex;
+        gap: 1rem;
+      }
       #tablesContainer {
         width: fit-content;
       }
@@ -82,17 +86,34 @@
     <div class="button-group">
       <button onclick="startCamera()">Start Camera</button>
       <button onclick="stopCamera()">Stop Camera</button>
+    </div>
+    <div class="button-group">
       <button onclick="shareData()">Share</button>
       <button onclick="copyData()">Copy</button>
+    </div>
+    <div class="button-group">
+      <button onclick="clearData()">Clear</button>
     </div>
     <video id="camera" muted playsinline></video>
     <div id="tablesContainer" style="display: flex; flex-wrap: wrap"></div>
     <script>
+      function saveAnswer(id, option) {
+        if (option > 0) {
+          localStorage.setItem('mcAnswer_' + id, option)
+        } else {
+          localStorage.removeItem('mcAnswer_' + id)
+        }
+      }
+
+      let answerMark = '✓'
+
       function renderTable(table, start, end) {
         table.innerHTML = demoTable.innerHTML
         table.querySelector('tbody tr').remove()
         let tBody = table.querySelector('tbody')
         for (let i = start; i <= end; i++) {
+          let savedOption = +localStorage.getItem('mcAnswer_' + i)
+
           let row = tBody.insertRow()
           row.insertCell().textContent = i
           let a = row.insertCell()
@@ -100,12 +121,22 @@
           let c = row.insertCell()
           let d = row.insertCell()
           let options = [a, b, c, d]
-          for (let option of options) {
+
+          for (
+            let optionIndex = 0;
+            optionIndex < options.length;
+            optionIndex++
+          ) {
+            let option = options[optionIndex]
+            if (savedOption === optionIndex + 1) {
+              option.textContent = answerMark
+            }
             option.onclick = () => {
               for (let option of options) {
                 option.textContent = ''
               }
-              option.textContent = '✓'
+              option.textContent = answerMark
+              saveAnswer(i, optionIndex + 1)
             }
           }
         }
@@ -127,10 +158,41 @@
         }
       }
 
+      function clearData() {
+        for (let row of document.querySelectorAll(
+          '#tablesContainer tbody tr',
+        )) {
+          let cells = row.querySelectorAll('td')
+          let id = +cells[0].textContent
+          if (!id) {
+            continue
+          }
+          for (let i = 1; i < cells.length; i++) {
+            cells[i].textContent = ''
+          }
+        }
+      }
+
+      // Load saved settings
+      let savedTotal = localStorage.getItem('mcTotalQuestions')
+      if (savedTotal) {
+        totalQuestions.value = savedTotal
+      }
+      let savedPerTable = localStorage.getItem('mcQuestionsPerTable')
+      if (savedPerTable) {
+        questionsPerTable.value = savedPerTable
+      }
+
       updateTables()
 
-      totalQuestions.addEventListener('input', updateTables)
-      questionsPerTable.addEventListener('input', updateTables)
+      totalQuestions.addEventListener('input', () => {
+        localStorage.setItem('mcTotalQuestions', totalQuestions.value)
+        updateTables()
+      })
+      questionsPerTable.addEventListener('input', () => {
+        localStorage.setItem('mcQuestionsPerTable', questionsPerTable.value)
+        updateTables()
+      })
 
       async function startCamera() {
         let tables = document.querySelectorAll('#tablesContainer .mc-table')
