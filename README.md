@@ -10,16 +10,22 @@ This tool allows manual marking by scanning answer sheets (camera optional), whi
 
 - **Configurable Questions**: Set the total number of questions and questions per table
 - **Manual Marking**: Click on A, B, C, or D options to mark answers manually—ideal when students erase and change answers
+- **Auto-Save**: All answers and settings are automatically saved to browser localStorage—no data loss on accidental refresh
+- **Clear Function**: Clear all answers with one click while preserving your settings
 - **Optional Camera Support**: Use your device's camera to scan answer sheets (useful for mobile devices)
 - **Data Export**: Share or copy your answers as JSON data
 - **Responsive Design**: Works on desktop and mobile devices
 
 ## Usage
 
+All answers and settings are automatically saved—no need to worry about accidental page refreshes.
+
 1. **Set Total Questions**: Enter the total number of questions in the "Total Questions" field
 2. **Set Questions per Table**: Configure how many questions appear in each table
-3. **Mark Answers**: Click on the A, B, C, or D cell for each question to mark the answer. Optionally, click "Start Camera" to overlay the camera view on the answer sheet for easier scanning
-4. **Export Data**:
+3. **Mark Answers**: Click on the A, B, C, or D cell for each question to mark the answer
+4. **Optional Camera**: Click "Start Camera" to overlay the camera view on the answer sheet for easier scanning
+5. **Clear Answers**: Click "Clear" to remove all answer marks (settings are preserved)
+6. **Export Data**:
    - Click "Share" to share the data using the Web Share API
    - Click "Copy" to copy the JSON data to your clipboard
 
