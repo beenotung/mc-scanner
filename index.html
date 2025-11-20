@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MC Scanner</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid black;
+        padding: 0.5rem;
+        width: 3rem;
+        text-align: center;
+      }
+      .mc-table {
+        user-select: none;
+      }
+      #camera {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.5;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="demoTable" class="mc-table" style="margin: 1rem">
+      <thead>
+        <tr>
+          <th>題號</th>
+          <th>A</th>
+          <th>B</th>
+          <th>C</th>
+          <th>D</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>示範</td>
+          <td></td>
+          <td></td>
+          <td>✓</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin: 1rem">
+      <button onclick="startCamera()">Start Camera</button>
+      <button onclick="stopCamera()">Stop Camera</button>
+      <button onclick="shareData()">Share</button>
+      <button onclick="copyData()">Copy</button>
+    </div>
+    <video id="camera" muted playsinline></video>
+    <div style="display: flex; flex-wrap: wrap">
+      <table id="table1" class="mc-table"></table>
+      <table id="table2" class="mc-table"></table>
+      <table id="table3" class="mc-table"></table>
+    </div>
+    <script>
+      function renderTable(table, start, end) {
+        table.innerHTML = demoTable.innerHTML
+        table.querySelector('tbody tr').remove()
+        let tBody = table.querySelector('tbody')
+        for (let i = start; i <= end; i++) {
+          let row = tBody.insertRow()
+          row.insertCell().textContent = i
+          let a = row.insertCell()
+          let b = row.insertCell()
+          let c = row.insertCell()
+          let d = row.insertCell()
+          let options = [a, b, c, d]
+          for (let option of options) {
+            option.onclick = () => {
+              for (let option of options) {
+                option.textContent = ''
+              }
+              option.textContent = '✓'
+            }
+          }
+        }
+      }
+      renderTable(table1, 1, 8)
+      renderTable(table2, 9, 16)
+      renderTable(table3, 17, 24)
+
+      async function startCamera() {
+        let rect = table1.getBoundingClientRect()
+        camera.style.width = rect.width + 'px'
+        camera.style.height = rect.height + 'px'
+        camera.style.top = rect.top + 'px'
+        camera.style.left = rect.left + 'px'
+        let stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'environment',
+            // width: { ideal: rect.width },
+            // height: { ideal: rect.height },
+          },
+          audio: false,
+        })
+        camera.srcObject = stream
+        camera.play()
+      }
+
+      function stopCamera() {
+        let stream = camera.srcObject
+        let tracks = stream.getTracks()
+        for (let track of tracks) {
+          track.stop()
+        }
+        camera.srcObject = null
+        camera.pause()
+      }
+
+      function exportData() {
+        let answers = []
+        for (let row of document.querySelectorAll('tbody tr')) {
+          let cells = row.querySelectorAll('td')
+          let id = +cells[0].textContent
+          if (!id) {
+            continue
+          }
+          let option = Array.from(cells).findIndex(
+            cell => cell.textContent === '✓',
+          )
+          if (option == -1) {
+            option = 0
+          }
+          answers.push({ id, option })
+        }
+        let seat = prompt('Seat no:')
+        let json = { seat, answers }
+        let text = JSON.stringify(json)
+        return { seat, answers, text }
+      }
+
+      async function shareData() {
+        let { seat, answers, text } = exportData()
+        navigator.share({
+          title: 'MC of seat: ' + seat,
+          text,
+        })
+      }
+
+      function copyData() {
+        let { text } = exportData()
+        let textarea = document.createElement('textarea')
+        document.body.prepend(textarea)
+        textarea.value = text
+        textarea.select()
+        let result = document.execCommand('copy')
+        if (result) {
+          alert('Copied to clipboard')
+          textarea.remove()
+        } else {
+          alert('Please copy the text manually')
+        }
+      }
+    </script>
+  </body>
+</html>
