@@ -12,11 +12,21 @@
       td {
         border: 1px solid black;
         padding: 0.5rem;
-        width: 3rem;
+        width: 2.25rem;
+        height: 2.25rem;
         text-align: center;
       }
       .mc-table {
         user-select: none;
+        height: fit-content;
+      }
+      .button-group,
+      .input-field {
+        display: block;
+        margin: 1rem;
+      }
+      #tablesContainer {
+        width: fit-content;
       }
       #camera {
         position: fixed;
@@ -49,18 +59,34 @@
         </tr>
       </tbody>
     </table>
-    <div style="margin: 1rem">
+    <label class="input-field">
+      Total Questions:
+      <input
+        type="number"
+        id="totalQuestions"
+        value="24"
+        min="1"
+        style="width: 4rem; margin: 0 0.5rem"
+      />
+    </label>
+    <label class="input-field">
+      Questions per Table:
+      <input
+        type="number"
+        id="questionsPerTable"
+        value="8"
+        min="1"
+        style="width: 4rem; margin: 0 0.5rem"
+      />
+    </label>
+    <div class="button-group">
       <button onclick="startCamera()">Start Camera</button>
       <button onclick="stopCamera()">Stop Camera</button>
       <button onclick="shareData()">Share</button>
       <button onclick="copyData()">Copy</button>
     </div>
     <video id="camera" muted playsinline></video>
-    <div style="display: flex; flex-wrap: wrap">
-      <table id="table1" class="mc-table"></table>
-      <table id="table2" class="mc-table"></table>
-      <table id="table3" class="mc-table"></table>
-    </div>
+    <div id="tablesContainer" style="display: flex; flex-wrap: wrap"></div>
     <script>
       function renderTable(table, start, end) {
         table.innerHTML = demoTable.innerHTML
@@ -84,12 +110,35 @@
           }
         }
       }
-      renderTable(table1, 1, 8)
-      renderTable(table2, 9, 16)
-      renderTable(table3, 17, 24)
+
+      function updateTables() {
+        let total = parseInt(totalQuestions.value) || 24
+        let perTable = parseInt(questionsPerTable.value) || 8
+        let tablesContainer = document.getElementById('tablesContainer')
+        tablesContainer.innerHTML = ''
+
+        for (let i = 0; i < total; i += perTable) {
+          let start = i + 1
+          let end = Math.min(i + perTable, total)
+          let table = document.createElement('table')
+          table.className = 'mc-table'
+          tablesContainer.appendChild(table)
+          renderTable(table, start, end)
+        }
+      }
+
+      updateTables()
+
+      totalQuestions.addEventListener('input', updateTables)
+      questionsPerTable.addEventListener('input', updateTables)
 
       async function startCamera() {
-        let rect = table1.getBoundingClientRect()
+        let tables = document.querySelectorAll('#tablesContainer .mc-table')
+        if (tables.length === 0) {
+          alert('Please create tables first')
+          return
+        }
+        let rect = tables[0].parentElement.getBoundingClientRect()
         camera.style.width = rect.width + 'px'
         camera.style.height = rect.height + 'px'
         camera.style.top = rect.top + 'px'
