@@ -1,33 +1,27 @@
 # MC Scanner
 
-A very simple web-based tool for creating and marking Multiple Choice (MC) answer sheets. Perfect for teachers without budget—completely free, no installation, no complexity. Just open and use.
-
-This tool allows manual marking by scanning answer sheets (camera optional), which is ideal when students erase and change their answers—unlike automated scanners that may struggle with erasures.
+A simple web tool for marking Multiple Choice answer sheets. Perfect for teachers without budget—completely free, no installation needed.
 
 **Live Demo**: [https://mc-scanner.surge.sh](https://mc-scanner.surge.sh)
 
+Manual marking by scanning answer sheets (camera optional). Ideal when students erase and change answers—unlike automated scanners that struggle with erasures.
+
 ## Features
 
-- **Configurable Questions**: Set the total number of questions and questions per table
-- **Manual Marking**: Click on A, B, C, or D options to mark answers manually—ideal when students erase and change answers
-- **Auto-Save**: All answers and settings are automatically saved to browser localStorage—no data loss on accidental refresh
-- **Clear Function**: Clear all answers with one click while preserving your settings
-- **Optional Camera Support**: Use your device's camera to scan answer sheets (useful for mobile devices)
-- **Data Export**: Share or copy your answers as JSON data
-- **Responsive Design**: Works on desktop and mobile devices
+- **Configurable**: Set total questions and questions per table
+- **Auto-Save**: All answers and settings saved automatically—no data loss on refresh
+- **Manual Marking**: Click A, B, C, or D to mark answers
+- **Camera Support**: Optional camera overlay for scanning (mobile-friendly)
+- **Export**: Share or copy answers as JSON
+- **Responsive**: Works on desktop and mobile
 
 ## Usage
 
-All answers and settings are automatically saved—no need to worry about accidental page refreshes.
-
-1. **Set Total Questions**: Enter the total number of questions in the "Total Questions" field
-2. **Set Questions per Table**: Configure how many questions appear in each table
-3. **Mark Answers**: Click on the A, B, C, or D cell for each question to mark the answer
-4. **Optional Camera**: Click "Start Camera" to overlay the camera view on the answer sheet for easier scanning
-5. **Clear Answers**: Click "Clear" to remove all answer marks (settings are preserved)
-6. **Export Data**:
-   - Click "Share" to share the data using the Web Share API
-   - Click "Copy" to copy the JSON data to your clipboard
+1. Set total questions and questions per table
+2. Click A, B, C, or D to mark answers (auto-saved)
+3. Optional: Use camera overlay for easier scanning
+4. Export: Share or copy answers as JSON
+5. Clear: Remove all marks (settings preserved)
 
 ## Data Format
 
@@ -53,8 +47,8 @@ Where:
 
 ## Requirements
 
-- A modern web browser with JavaScript enabled
-- For optional camera functionality: A device with a camera and browser support for `getUserMedia` API
+- Modern web browser with JavaScript
+- Camera (optional): Device with camera and `getUserMedia` API support
 
 ## License
 
